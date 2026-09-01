@@ -20,8 +20,7 @@ __pycache__/
 Data/*.csv
 Data/*.zip
 
-# Trained model files
-models/*.pkl
+test_payload.json
 
 # VS Code
 .vscode/
