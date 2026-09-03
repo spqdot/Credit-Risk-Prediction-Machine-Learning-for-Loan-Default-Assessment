@@ -219,4 +219,42 @@ def predict(data: dict):
         raise HTTPException(
             status_code=500,
             detail=f"Prediction failed: {str(e)}"
+        )        from fastapi import FastAPI, HTTPException
+        from fastapi.middleware.cors import CORSMiddleware
+        
+        # ...existing code...
+        
+        app = FastAPI(
+            title="Credit Risk Prediction API",
+            description="XGBoost-based API for loan default risk prediction.",
+            version="1.0.0"
         )
+        
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:5173"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        
+        # ...existing code...        from fastapi import FastAPI, HTTPException
+        from fastapi.middleware.cors import CORSMiddleware
+        
+        # ...existing code...
+        
+        app = FastAPI(
+            title="Credit Risk Prediction API",
+            description="XGBoost-based API for loan default risk prediction.",
+            version="1.0.0"
+        )
+        
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:5173"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        
+        # ...existing code...
