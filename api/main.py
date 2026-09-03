@@ -234,7 +234,58 @@ def predict(data: dict):
             CORSMiddleware,
             allow_origins=["http://localhost:5173"],
             allow_credentials=True,
-            allow_methods=["*"],
+            allow_methods=["*"],            cd /d/Shrabani.Personal/Self_Project/Finance_project
+            
+            python - <<'PY'
+            from pathlib import Path
+            
+            file_path = Path("api/main.py")
+            content = file_path.read_text(encoding="utf-8")
+            
+            # Add the CORS import once.
+            if "from fastapi.middleware.cors import CORSMiddleware" not in content:
+                content = content.replace(
+                    "from fastapi import FastAPI, HTTPException",
+                    "from fastapi import FastAPI, HTTPException\nfrom fastapi.middleware.cors import CORSMiddleware",
+                    1,
+                )
+            
+            # Remove all accidentally pasted code after the predict exception block.
+            exception_start = content.index("    except Exception as e:")
+            content = content[:exception_start] + """    except Exception as e:
+                    raise HTTPException(
+                        status_code=500,
+                        detail=f"Prediction failed: {str(e)}"
+                    )
+            """
+            
+            # Add CORS directly after the original FastAPI app definition.
+            app_block = """app = FastAPI(
+                title="Credit Risk Prediction API",
+                description="XGBoost-based API for loan default risk prediction.",
+                version="1.0.0"
+            )
+            """
+            
+            cors_block = """
+            app.add_middleware(
+                CORSMiddleware,
+                allow_origins=[
+                    "http://localhost:5173",
+                ],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
+            """
+            
+            if "app.add_middleware(" not in content:
+                content = content.replace(app_block, app_block + cors_block, 1)
+            
+            file_path.write_text(content, encoding="utf-8")
+            print("api/main.py fixed successfully.")
+            PY            python -m py_compile api/main.py
+            git diff
             allow_headers=["*"],
         )
         
