@@ -94,3 +94,99 @@ h2 {
 .status-card h2 {
   color: #1d5d38;
 }
+.prediction-form {
+  margin: 30px 0;
+  padding: 24px;
+  background: #f8fafc;
+  border: 1px solid #dbe5ef;
+  border-radius: 10px;
+}
+
+.prediction-form h2 {
+  margin-bottom: 8px;
+  color: #173f63;
+}
+
+.form-help {
+  color: #526579;
+  line-height: 1.6;
+}
+
+.prediction-form textarea {
+  width: 100%;
+  margin: 14px 0;
+  padding: 14px;
+  color: #172033;
+  background: #ffffff;
+  border: 1px solid #b8c8d8;
+  border-radius: 8px;
+  font-family: Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.prediction-form textarea:focus {
+  outline: none;
+  border-color: #1769aa;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.14);
+}
+
+.prediction-form .primary-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.primary-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.error-message {
+  margin: 24px 0;
+  padding: 14px;
+  color: #9d1c1c;
+  background: #fff0f0;
+  border-left: 5px solid #d73838;
+  border-radius: 8px;
+}
+
+.result-card {
+  margin: 24px 0;
+  padding: 22px;
+  border-radius: 10px;
+}
+
+.result-card h2 {
+  margin-bottom: 12px;
+}
+
+.result-card p:last-child {
+  margin-bottom: 0;
+}
+
+.result-label {
+  color: #526579;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.low-risk {
+  background: #edf9f0;
+  border-left: 5px solid #27834b;
+}
+
+.low-risk h2 {
+  color: #1d5d38;
+}
+
+.high-risk {
+  background: #fff0f0;
+  border-left: 5px solid #d73838;
+}
+
+.high-risk h2 {
+  color: #a61b1b;
+}

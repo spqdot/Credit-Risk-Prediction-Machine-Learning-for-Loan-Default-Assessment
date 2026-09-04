@@ -1,314 +1,292 @@
-# Credit Default Risk Prediction
+# Credit Risk Prediction: Machine Learning for Loan Default Assessment
 
-## Overview
+A full-stack machine learning application that predicts the probability of loan default from applicant and loan information.
 
-This project develops a machine learning model to predict whether a loan applicant is likely to default.
+The project uses an **XGBoost classification model** with a preprocessing pipeline, served through a **FastAPI** backend and accessed from a **React + Vite** frontend.
 
-The project focuses on binary classification of credit risk using applicant demographic, financial, employment, housing, and credit-related information.
+## Live Links
 
-The main objectives are to:
+| Service | Link |
+|---|---|
+| Frontend | Run locally at `http://localhost:5173` |
+| Backend API | [Credit Risk Prediction API](https://credit-risk-prediction-api-rjtg.onrender.com) |
+| API Health Check | [View Health Status](https://credit-risk-prediction-api-rjtg.onrender.com/health) |
+| Swagger API Documentation | [Open API Documentation](https://credit-risk-prediction-api-rjtg.onrender.com/docs) |
+| ReDoc Documentation | [Open ReDoc](https://credit-risk-prediction-api-rjtg.onrender.com/redoc) |
 
-- Explore and understand the dataset
-- Identify data quality and missing-value issues
-- Analyze factors associated with loan default
-- Handle class imbalance
-- Build and compare multiple machine learning models
-- Optimize the classification threshold
-- Explain model predictions using SHAP
-- Select and save a final model for future predictions
-
----
-
-## Business Problem
-
-Financial institutions need to identify applicants who have a higher probability of defaulting on their loans.
-
-An effective credit-risk model can help lenders:
-
-- Identify potentially high-risk applicants
-- Support loan approval decisions
-- Reduce potential financial losses
-- Improve risk-based decision making
-- Prioritize applicants for additional assessment
-
-Because loan default is a relatively rare event, this is an imbalanced classification problem.
-
-Therefore, model evaluation should not rely on accuracy alone.
+> The backend is hosted on Render's free tier. If inactive, its first request may take around 50–60 seconds while the service starts.
 
 ---
 
-## Dataset
+## Features
 
-The project uses the Home Credit-style application dataset.
-
-The target variable is:
-
-`TARGET`
-
-where:
-
-- `0` = applicant did not default
-- `1` = applicant defaulted
-
-The dataset contains approximately 307,511 observations before the train/validation split.
-
-The target distribution is approximately:
-
-- `TARGET = 0`: 91.93%
-- `TARGET = 1`: 8.07%
-
-This class imbalance makes metrics such as ROC-AUC, PR-AUC, precision, recall, and F1-score particularly important.
+- Predicts loan default risk using a trained XGBoost model.
+- Returns a default probability and risk classification.
+- Uses a configurable decision threshold of `0.68`.
+- FastAPI REST endpoints for health monitoring and predictions.
+- Swagger and ReDoc API documentation.
+- React frontend that verifies backend connectivity.
+- Frontend prediction form that submits JSON data to the API.
+- CORS configuration for local frontend-backend communication.
 
 ---
 
-## Project Workflow
-
-The project follows the following machine learning workflow:
-
-1. Exploratory Data Analysis
-2. Data quality and missing-value analysis
-3. Feature analysis
-4. Train/validation split
-5. Data preprocessing
-6. Class imbalance analysis
-7. Baseline model development
-8. Model comparison
-9. XGBoost development
-10. Hyperparameter tuning
-11. Classification threshold optimization
-12. Model explainability using SHAP
-13. Final model evaluation
-14. Model persistence
-
----
-
-## Exploratory Data Analysis
-
-Several categorical and numerical variables were investigated to understand their relationship with default risk.
-
-### Contract Type
-
-Cash loans showed a higher default rate than revolving loans.
-
-Approximate default rates:
-
-| Contract Type | Default Rate |
-|---|---:|
-| Cash loans | 8.3% |
-| Revolving loans | 5.5% |
-
-### Education
-
-Default rates varied substantially across education categories.
-
-The observed default rates included approximately:
-
-| Education Level | Default Rate |
-|---|---:|
-| Lower secondary | 10.93% |
-| Secondary / secondary special | 8.94% |
-| Incomplete higher | 8.48% |
-| Higher education | 5.36% |
-| Academic degree | 1.83% |
-
-These results indicate that education level is associated with differences in observed default rates.
-
-### Occupation
-
-Default rates also varied considerably across occupation groups.
-
-Low-skilled laborers showed the highest observed default rate among the displayed occupation groups, while accountants showed a substantially lower rate.
-
-This suggests that occupation-related information may provide useful predictive information for credit-risk modeling.
-
-### Income Type
-
-Default rates differed substantially across income types.
-
-For example, the observed rates included:
-
-- Maternity leave: 40.0%
-- Unemployed: 36.36%
-- Working: 9.59%
-- Commercial associate: 7.48%
-- State servant: 5.75%
-- Pensioner: 5.39%
-
-The categories with very small sample sizes should be interpreted cautiously.
-
-### Family Status
-
-Observed default rates also varied by family status.
-
-Civil marriage and single/not-married applicants showed higher default rates than married and widow categories.
-
-### Housing Type
-
-Applicants living in rented apartments and with parents showed higher observed default rates than applicants living in house/apartment categories.
-
----
-
-## Numerical Feature Analysis
-
-Important numerical variables included:
-
-- Age
-- Employment years
-- Credit-to-income ratio
-- Annuity-to-income ratio
-- Goods-to-income ratio
-
-Missing values were identified in several variables, including employment duration and some ratio-related features.
-
-The preprocessing pipeline handled missing values and transformed categorical variables for machine learning.
-
----
-
-## Data Preprocessing
-
-The dataset was divided into training and validation sets using a stratified split.
-
-The resulting datasets were:
-
-- Training set: `246,008` observations
-- Validation set: `61,503` observations
-
-The target distribution was preserved between the training and validation sets.
-
-The processed feature matrix contained approximately 200 features after preprocessing.
-
-The preprocessing workflow included:
-
-- Missing-value handling
-- Numerical feature processing
-- Categorical feature encoding
-- Feature transformation
-
----
-
-## Models
-
-Three classification models were evaluated:
-
-1. Logistic Regression
-2. Random Forest
-3. XGBoost
-
----
-
-## Model Comparison
-
-The models were evaluated using:
-
-- Accuracy
-- ROC-AUC
-- PR-AUC
-
-The results were:
-
-| Model | Accuracy | ROC-AUC | PR-AUC |
-|---|---:|---:|---:|
-| Logistic Regression | 0.6901 | 0.7491 | 0.2284 |
-| Random Forest | 0.8040 | 0.7404 | 0.2167 |
-| XGBoost | 0.7108 | 0.7608 | 0.2513 |
-
-### Model Selection
-
-Random Forest achieved the highest accuracy.
-
-However, accuracy is not the most informative metric for this problem because approximately 92% of observations belong to the non-default class.
-
-XGBoost achieved:
-
-- The highest ROC-AUC: `0.7608`
-- The highest PR-AUC: `0.2513`
-
-Therefore, XGBoost was selected as the preferred final model based on its stronger ability to discriminate between default and non-default applicants.
-
----
-
-## Hyperparameter Tuning
-
-XGBoost hyperparameters were investigated using `RandomizedSearchCV`.
-
-The tuning search included combinations of:
-
-- `n_estimators`: 200, 300
-- `max_depth`: 3, 5, 7
-- `learning_rate`: 0.03, 0.05, 0.1
-- `subsample`: 0.8
-- `colsample_bytree`: 0.8
-
-The best configuration identified during tuning included:
+## Prediction Output
+
+The prediction endpoint returns a response similar to:
+
+```json
+{
+  "prediction": 0,
+  "risk": "Not Default",
+  "default_probability": 0.23,
+  "threshold": 0.68
+}
+```
+
+| Field | Description |
+|---|---|
+| `prediction` | `0` means **Not Default**; `1` means **Default** |
+| `risk` | Human-readable risk category |
+| `default_probability` | Model-estimated probability that the applicant will default |
+| `threshold` | Decision threshold used to classify risk (`0.68`) |
+
+A prediction is classified as **Default** when:
 
 ```text
-n_estimators = 300
-max_depth = 5
-learning_rate = 0.03
-subsample = 0.8
-colsample_bytree = 0.8
+default_probability >= 0.68
+```
 
+---
 
-### Project Structure
+## Project Structure
 
+```text
 Finance_project/
-│
-├── Data/
-│   ├── application_train.csv
-│   ├── application_test.csv
-│   └── ...
-│
+├── api/
+│   └── main.py                 # FastAPI application and prediction endpoint
 ├── models/
-│   ├── final_xgb_model.pkl
-│   └── preprocessor.pkl
-│
-├── notebooks/
-│   ├── 01_EDA.ipynb
-│   └── 02_Preprocessing.ipynb
-│
-├── reports/
-│
-├── src/
-│
-├── README.md
+│   ├── final_xgb_model.pkl     # Trained XGBoost model
+│   └── preprocessor.pkl        # Feature preprocessing pipeline
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx             # React user interface
+│   │   ├── App.css             # Frontend styles
+│   │   └── main.jsx            # React entry point
+│   ├── .env                    # Local frontend API URL (not committed)
+│   ├── index.html
+│   └── package.json
 ├── requirements.txt
-└── .gitignore
+└── README.md
+```
 
+---
 
-### Limitations
-  
-The model should not be considered a production-ready lending decision system.
+## Backend Setup
 
-Important limitations include:
+### 1. Create and activate a virtual environment
 
-The dataset is highly imbalanced.
-Some categorical groups contain very few observations.
-Observational relationships should not be interpreted automatically as causal relationships.
-Model performance depends on the underlying dataset and validation methodology.
-A real credit decision system would require additional fairness, regulatory, monitoring, calibration, and cost-sensitive evaluation.
-The selected classification threshold should ultimately be determined using business costs associated with false positives and false negatives.
+On Windows PowerShell:
 
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-### Future Improvements
+On Git Bash:
 
-Potential future work includes:
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+```
 
-Probability calibration
-Cost-sensitive learning
-More systematic hyperparameter optimization
-Cross-validation with PR-AUC as an optimization objective
-Model monitoring
-Fairness analysis across applicant groups
-Error analysis of false positives and false negatives
-Deployment through a REST API
-Development of a credit-risk prediction dashboard
-Model versioning and experiment tracking
+### 2. Install Python dependencies
 
+```bash
+pip install -r requirements.txt
+```
 
-### Author
+### 3. Run the FastAPI backend locally
 
-Shrabani Panigrahi
+From the project root:
 
-Data Science | Machine Learning | AI Engineering
+```bash
+python -m uvicorn api.main:app --reload
+```
 
-This project demonstrates an end-to-end machine learning workflow covering exploratory data analysis, preprocessing, model development, evaluation, threshold optimization, and model explainability.
+The local backend will be available at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Useful local endpoints:
+
+```text
+http://127.0.0.1:8000/health
+http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/redoc
+```
+
+---
+
+## Frontend Setup
+
+### 1. Go to the frontend folder
+
+```bash
+cd frontend
+```
+
+### 2. Install Node.js dependencies
+
+```bash
+npm install
+```
+
+### 3. Create the environment file
+
+Create `frontend/.env`:
+
+```env
+VITE_API_URL=https://credit-risk-prediction-api-rjtg.onrender.com
+```
+
+For local backend testing, use:
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+### 4. Start the React frontend
+
+```bash
+npm run dev
+```
+
+Open the URL printed in the terminal, normally:
+
+```text
+http://localhost:5173
+```
+
+### 5. Build the frontend for production
+
+```bash
+npm run build
+```
+
+The production build is generated in:
+
+```text
+frontend/dist/
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/` | API welcome/status response |
+| `GET` | `/health` | Confirms API, model, and preprocessor availability |
+| `POST` | `/predict` | Returns loan default prediction |
+| `GET` | `/docs` | Swagger interactive documentation |
+| `GET` | `/redoc` | ReDoc API documentation |
+
+### Health Check Example
+
+```bash
+curl https://credit-risk-prediction-api-rjtg.onrender.com/health
+```
+
+Example response:
+
+```json
+{
+  "status": "healthy",
+  "model_loaded": true,
+  "preprocessor_loaded": true
+}
+```
+
+### Prediction Request
+
+Use Swagger documentation to see the complete request schema:
+
+[https://credit-risk-prediction-api-rjtg.onrender.com/docs](https://credit-risk-prediction-api-rjtg.onrender.com/docs)
+
+In Swagger:
+
+1. Open `POST /predict`.
+2. Select **Try it out**.
+3. Enter applicant values in the request body.
+4. Select **Execute**.
+5. Review the prediction response.
+
+---
+
+## Deployment
+
+### Backend
+
+The FastAPI backend is deployed on **Render**.
+
+Start command:
+
+```bash
+python -m uvicorn api.main:app --host 0.0.0.0 --port $PORT
+```
+
+### Frontend
+
+The React frontend can be deployed to:
+
+- Vercel
+- Netlify
+- Render Static Site
+
+Before deploying the frontend, add its production domain to `allow_origins` in `api/main.py`.
+
+Example:
+
+```python
+allow_origins=[
+    "http://localhost:5173",
+    "https://your-frontend-domain.vercel.app",
+]
+```
+
+---
+
+## Technology Stack
+
+### Backend
+
+- Python
+- FastAPI
+- Uvicorn
+- XGBoost
+- Pandas
+- Joblib
+- Scikit-learn preprocessing pipeline
+
+### Frontend
+
+- React
+- Vite
+- CSS
+- JavaScript Fetch API
+
+### Deployment
+
+- Render — backend hosting
+- GitHub — source control
+
+---
+
+## Repository
+
+GitHub repository:
+
+[Credit-Risk-Prediction-Machine-Learning-for-Loan-Default-Assessment](https://github.com/spqdot/Credit-Risk-Prediction-Machine-Learning-for-Loan-Default-Assessment)
